@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html>
+<!--
+![Code Style: Really Bad](https://alan.liangcn.ml/CodeStyle.svg)
+一天完成，代码质量极差，勿喷
+欢迎重构或pr，不太欢迎issue，除非有重大bug
+请勿滥用本服务！请勿滥用本服务！请勿滥用本服务！【众说三】
+本服务服务端程序无任何防止恶意使用的逻辑，因此切勿使用本服务做DDoS或者getshell之类的实验！！！
+我相信你是好心人。??😉
+https://github.com/Alan-Liang/farewell
+Author: Alan-Liang
+广告：欢迎加入客页工作室
+邮件至a艾特1e100点tk来联系我。
+-->
+<head>
+<title>Farewell</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="./mdc.css" rel="stylesheet" type="text/css" />
+<style>
+/* commons */
+.width-100{
+	width:100%;
+}
+.width-90{
+	width:90%;
+}
+.width-90.a.b.c.d{
+	margin-left:auto;
+	margin-right:auto;
+}
+.align-center{
+	text-align:center;
+}
+.align-left{
+	text-align:left;
+}
+.no-padding{
+	padding:0;
+	min-height:0;
+}
+.align-center{
+	text-align:center;
+}
+.align-right{
+	text-align:right;
+}
+[hidden], .hidden{
+	display:none;
+}
+.atme{
+	font-weight:bold;
+	color:#e00;
+}
+
+body{
+	margin:0;
+}
+html,body{
+	width:100%;
+	height:100%;
+}
+#header-pad{
+	height:64px;
+}
+#student,#teacher,#parent,#final{
+	display:none;
+}
+#preview{
+	width:100%;
+}
+#paint-canvas{
+	/*display:none;*/
+	width:100%;
+	height:100%;
+}
+#sign-canvas{
+	border:1px solid #000;
+	margin-left:10px;
+	margin-right:10px;
+	width:700px;
+	height:280px;
+}
+#sign{
+	display:none;
+	width:720px;
+}
+#styles{
+	display:none;
+}
+#bg-list li,#bg-list div,#bg-list img{
+	width:128px;
+	height:180px;
+	margin:10px;
+}
+#result{
+	display:none;
+}
+#final-image{
+	width:100%;
+}
+</style>
+<script language="x/template" id="template-radio">
+
+<div class="mdc-form-field" data-mdc-auto-init="MDCFormField">
+  <div class="mdc-radio" data-mdc-auto-init="MDCRadio">
+    <input class="mdc-radio__native-control" type="radio" id="{{id}}" name="{{name}}">
+    <div class="mdc-radio__background">
+      <div class="mdc-radio__outer-circle"></div>
+      <div class="mdc-radio__inner-circle"></div>
+    </div>
+  </div>
+  <label for="{{id}}">{{text}}</label>
+</div>
+</script>
+<script language="x/template" id="template-text-field">
+<div class="mdc-text-field width-90" data-mdc-auto-init="MDCTextField">
+  <input type="text" id="{{id}}" class="mdc-text-field__input">
+  <label class="mdc-floating-label" for="{{id}}">{{text}}</label>
+  <div class="mdc-line-ripple"></div>
+</div>
+<br />
+</script>
+<script language="x/template" id="template-select-frame">
+<div class="mdc-select" data-mdc-auto-init="MDCSelect">
+  <select class="mdc-select__native-control" id="{{id}}">
+	{{options}}
+  </select>
+  <label class="mdc-floating-label">{{text}}</label>
+  <div class="mdc-line-ripple"></div>
+</div>
+</script>
+<script language="x/template" id="template-imglist-li">
+  <li class="mdc-image-list__item">
+    <div class="bg-li mdc-image-list__image-aspect-container mdc-ripple-surface" data-mdc-auto-init="MDCRipple" id="{{id}}" onclick="$(&quot;bg&quot;).value=&quot;{{i}}&quot;">
+      <img class="mdc-image-list__image bg-img" src="{{src}}"/>
+    </div>
+  </li>
+</script>
+<script language="x/template" id="template-result">
+<h6 class="mdc-typography--subtitle1">提交成功！</h6>
+<h6 class="mdc-typography--subtitle1">订单号：{{id}}</h6>
+</script>
+
+<script language="x/template" id="template-select">
+    <option value="{{value}}">{{text}}</option>
+</script>
+<script language="x/template" id="template-text">
+
+姓名：{{name}}
+班级：{{itsClass}}
+外号有：{{nicks}}
+Ta{{study}}学魔。
+我叫Ta【{{nick}}】
+Ta叫我【{{mynick}}】
+微信：{{wechat}}
+手机：{{phone}}
+Ta能回忆起我：
+{{plot}}
+
+Ta是一位我尊敬的老师。
+Ta从{{begin}}到{{end}}期间，
+教我的{{subject}}。
+在Ta的印象中，我是这样的：
+{{timpact}}
+
+Ta是{{child}}的{{relation}}。
+在Ta的印象中，我是这样的：
+{{impact}}
+
+</script>
+<!--script type="text/javascript" src="https://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/vconsole/3.0.0/vconsole.min.js"></script-->
+</head>
+<body>
+<script src="./utils.js"></script>
+<div id="info">
+<header class="mdc-top-app-bar mdc-elevation--z5 {{hideAppBar}}" id="appbar" data-mdc-auto-init="MDCTopAppBar">
+  <div class="mdc-top-app-bar__row">
+    <section class="mdc-top-app-bar__section">
+      <span class="mdc-top-app-bar__title align-center width-100">Farewell</span>
+    </section>
+  </div>
+</header>
+<div id="header-pad" class="{{hideAppBar}}"></div>
+
+<div id="basics">
+<div class="align-center" data-init="radio identity rad-student/同学 rad-teacher/老师 rad-parent/家长">
+<h6 class="mdc-typography--subtitle1">1. 你的身份是？</h6>
+</div>
+
+<div class="align-center">
+<h6 class="mdc-typography--subtitle1">2. 你的名字是？</h6>
+<div data-init="text-field name/姓名"></div>
+<button id="upload-avatar" class="mdc-button mdc-button--raised" data-mdc-auto-init="MDCRipple">上传你的照片</button>
+<img id="preview" />
+<br />
+<button id="cont1" class="mdc-button mdc-button--raised" data-mdc-auto-init="MDCRipple">继续</button>
+</div>
+</div>
+
+<div id="student">
+<div class="align-center" data-init="select class 班级 4/4 1/1 2/2 3/3 5/5 6/6 7/7 8/8 9/9 10/10 11/11 12/12 13/13 14/14 other/其他年级或班级">
+<h6 class="mdc-typography--subtitle1">你的班级是？(如果不是初三请选其他)</h6>
+</div>
+
+<div class="align-center" data-init=
+"text-field nick/你的印象中我叫你什么？ mynick/你一般叫我什么？ plot/我做过什么令你印象深刻的事？ nicks/你还有什么别名？ wechat/你的微信 phone/你的电话号？">
+<h6 class="mdc-typography--subtitle1">一些个人问题</h6>
+</div>
+<div style="margin-left:5%;" data-init="select study 你是学魔吗？ yes/是的 abs/肯定是 whynot/怎么可能不是呢？"></div>
+</div><!-- end student -->
+
+<div id="teacher">
+<div class="align-center">
+<h6 class="mdc-typography--subtitle1">关于您</h6>
+<div data-init="text-field subject/您教的科目是？"></div>
+<div data-init="select begin 您从… 初一/初中一年级 初二/初中二年级 初三/初中三年级"></div>
+<div data-init="select end 教到… 初二/初中二年级 初三/初中三年级"></div>
+</div>
+
+<div class="align-center" data-init="text-field timpact/您对我的印象是…">
+<h6 class="mdc-typography--subtitle1">关于我</h6>
+</div>
+</div>
+
+<div id="parent">
+<div class="align-center" data-init="text-field child/您的孩子是？ relation/您是孩子的…">
+<h6 class="mdc-typography--subtitle1">关于您的孩子</h6>
+</div>
+<div class="align-center" data-init="text-field impact/您平时对我的印象是什么？">
+<h6 class="mdc-typography--subtitle1">关于我</h6>
+</div>
+</div>
+
+<div id="final" class="align-center width-100">
+<div class="align-left a b c d mdc-text-field mdc-text-field--textarea width-90" data-mdc-auto-init="MDCTextField">
+  <textarea id="says" class="mdc-text-field__input"></textarea>
+  <label for="says" class="mdc-floating-label">您有什么想对我说的吗？</label>
+</div>
+<button id="cont2" class="mdc-button mdc-button--raised" data-mdc-auto-init="MDCRipple">继续</button>
+</div>
+
+<div id="sign" class="align-center">
+<h6 class="mdc-typography--subtitle1">签名</h6>
+<h6 class="mdc-typography--subtitle2">您可以将屏幕横向旋转</h6>
+<canvas id="sign-canvas" width="700px" height="280px"></canvas>
+<button id="clear" class="mdc-button" data-mdc-auto-init="MDCRipple">清除</button>
+<button id="undo" class="mdc-button" data-mdc-auto-init="MDCRipple">撤销</button>
+<br />
+<button id="cont4" class="mdc-button mdc-button--raised" data-mdc-auto-init="MDCRipple">提交</button>
+<button id="skip4" class="mdc-button" data-mdc-auto-init="MDCRipple">跳过</button>
+</div>
+
+<div id="styles" class="align-center">
+<h6 class="mdc-typography--subtitle1">选择边框样式</h6>
+<ul class="mdc-image-list" id="bg-list"></ul>
+<div data-init="select bg 边框 sel/请点击图片 1/1 2/2 3/3 4/4 5/5 6/6 7/7"></div>
+<h6 class="mdc-typography--subtitle1">选择背景颜色</h6>
+<input id="color-bg" class="width-90" type="color" value="#ffffff" />
+<h6 class="mdc-typography--subtitle1">选择姓名颜色</h6>
+<input id="color-name" class="width-90" type="color" value="#000000" />
+<h6 class="mdc-typography--subtitle1">选择文字颜色</h6>
+<input id="color-text" class="width-90" type="color" value="#000000" />
+<h6 class="mdc-typography--subtitle1">选择留言颜色</h6>
+<input id="color-says" class="width-90" type="color" value="#000000" />
+<h6 class="mdc-typography--subtitle1">选择签名颜色</h6>
+<input id="color-sign" class="width-90" type="color" value="#000000" />
+<button id="cont3" class="mdc-button mdc-button--raised" data-mdc-auto-init="MDCRipple">下一步</button>
+</div>
+
+<div id="result" class="align-center">
+<div id="upload-res"></div>
+<img id="final-image" />
+<div id="res-action">
+<button id="submit" class="mdc-button mdc-button--raised" data-mdc-auto-init="MDCRipple">提交图片</button>
+</div>
+</div>
+<br />
+<!-- Uploader -->
+<input type="file" id="image" accept="image/*" style="display:none">
+</div>
+<!-- Info end -->
+
+<div id="paint">
+<canvas id="paint-canvas">你在用什么浏览器？请换一个新的！推荐：<a href="https://www.google.cn/chrome">Google Chrome</a></canvas>
+<div id="controls"></div>
+</div>
+
+<script src="./init.js"></script>
+<script src="./signpad.js"></script>
+<script>
+var ua=navigator.userAgent;
+if(ua.indexOf("micromess")>-1){ //微型混乱
+	if(!(/wifi/i).test(ua)){
+		alert("本页面可能消耗1-2MB流量，推荐在Wi-Fi网络中访问。");
+	}
+}
+//@author Rok Strniša@StackOverflow
+//see https://stackoverflow.com/questions/5026961/html5-canvas-ctx-filltext-wont-do-line-breaks/21574562
+CanvasRenderingContext2D.prototype.wrapText = function (text, x, y, maxWidth, lineHeight) {
+    var lines = text.split("\n");
+    for (var i = 0; i < lines.length; i++) {
+        var words = lines[i].split('');
+        var line = '';
+        for (var n = 0; n < words.length; n++) {
+            var testLine = line + words[n];
+            var metrics = this.measureText(testLine);
+            var testWidth = metrics.width;
+            if (testWidth > maxWidth && n > 0) {
+                this.fillText(line, x, y, maxWidth);
+                line = words[n];
+                y += lineHeight;
+            }
+            else {
+                line = testLine;
+            }
+        }
+        this.fillText(line, x, y, maxWidth);
+        y += lineHeight;
+    }
+}
+//@author end
+var html="";
+var imglist=$("bg-list");
+var templImglistLi=$("template-imglist-li").innerHTML;
+for(var i=1;i<8;i++){
+	html+=template(templImglistLi,{src:"./background/thumb/"+i+".jpg",id:"bg-li-"+i,i:i});
+}
+imglist.innerHTML=html;
+
+var templText=$("template-text").innerHTML.split("\n\n");
+$("upload-avatar").onclick=function(){
+	$("image").click();
+};
+$("image").onchange=function(){
+	var files=$("image").files;
+	var _url=URL.createObjectURL(files[0]);
+	$("preview").src=_url;
+};
+function isChecked(id){
+	return $(id).parentElement.MDCRadio.checked;
+}
+var identity;
+$("cont1").onclick=function(){
+	if(!$("name").value){
+		$("name").focus();
+		return;
+	}
+	if((!$("image").files||!$("image").files.length)&&(!confirm("你确定不上传照片吗？"))){
+		$("image").click();
+		return;
+	}
+	if(isChecked("rad-student")){
+		$("student").show();
+		identity=1;
+	}else if(isChecked("rad-teacher")){
+		$("teacher").show();
+		identity=2;
+	}else if(isChecked("rad-parent")){
+		$("parent").show();
+		identity=3;
+	}else{
+		return;
+	}
+	$("basics").hide();
+	$("final").show();
+	setTimeout(function(){
+		window.scrollTo(0,0);
+	},10);
+}
+$("cont2").onclick=function(){
+	var fields;
+	switch(identity){
+		case 1: //student
+		fields="name|nick|mynick|plot|nicks|wechat|phone|says".split("|");
+		break;
+		
+		case 2: //teacher
+		fields="name|subject|begin|end|timpact|says".split("|");
+		break;
+		
+		case 3: //parent
+		fields="name|child|relation|impact|says".split("|");
+		break;
+		
+		default: //error
+		alert("发生了一个诡异的错误。请联系我。");
+		return;
+		break;
+	}
+	var values={};
+	for(var i=0;i<fields.length;i++){
+		var el=$(fields[i]);
+		if(!el.value){
+			el.focus();
+			return;
+		}
+		values[fields[i]]=el.value;
+	}
+	if(identity==1){ //student
+		var itsClass=$("class").value; //class is reserved
+		if(itsClass=="other"){
+			var res;
+			while(!res){
+				res=prompt("请填写你的班级：","");
+			}
+			itsClass=res;
+		}
+		values.itsClass=itsClass;
+		values.study={
+			yes:"是",
+			abs:"肯定是",
+			whynot:"怎么可能不是"
+		}[$("study").value];
+	}
+	if($("image").files.length)
+		values.avatar=getDataURL($("preview"));
+	window.values=values;
+	$("teacher").hide();
+	$("student").hide();
+	$("parent").hide();
+	$("final").hide();
+	$("styles").show();
+}
+$("cont4").onclick=function(){
+	if(window.signPad.isEmpty())
+		return;
+	var v=window.values;
+	var inputs="bg|color-bg|color-name|color-text|color-says|color-sign".split("|");
+	for(var i=0;i<inputs.length;i++){
+		v[inputs[i]]=$(inputs[i]).value;
+	}
+	v.sign=$("sign-canvas").toDataURL();
+	paint();
+}
+$("cont3").onclick=function(){
+	if($("bg").value=="sel"){ //empty
+		alert("请选择边框！");
+		return;
+	}
+	var canvas=$("sign-canvas");
+	var signPad=window.signPad=new SignaturePad(canvas,{penColor:$("color-sign").value});	
+	$("clear").onclick=function(){
+		signPad.clear();
+	};
+	$("undo").onclick=function(){
+		var data = signPad.toData();
+		if(data){
+			data.pop();
+			signPad.fromData(data);
+		}
+	};
+	$("styles").hide();
+	$("sign").show();
+	setTimeout(function(){
+		window.scrollTo(0,1);
+	},10);
+};
+
+var paint=function(){
+	//paint!
+	setTimeout(function(){
+		window.scrollTo(0,1);
+	},10);
+	var values=window.values;
+	var size=[2492,3508];
+	var canvas=$("paint-canvas");
+	canvas.setAttribute("width",size[0]+"px");
+	canvas.setAttribute("height",size[1]+"px");
+	$("info").hide();
+	$("sign").hide();
+	$("paint").show();
+	var ctx=canvas.getContext("2d");
+	var img=new Image();
+	var avatar=new Image();
+	var sig=new Image();
+	ctx.font="256px Roboto";
+	ctx.wrapText("正在绘图中，请稍候…",0,2000);
+	img.onload=function(){
+		img.ok=true;
+		ctx.fillStyle=$("color-bg").value;
+		ctx.fillRect(0,0,size[0],size[1]);
+		ctx.drawImage(img,0,0,size[0],size[1])
+		ctx.fillStyle=$("color-name").value;;
+		ctx.textAlign="center";
+		ctx.font="256px Roboto";
+		ctx.fillText(values.name,1246,396);
+		ctx.fillStyle=$("color-text").value;
+		ctx.textAlign="start";
+		ctx.font="64px Roboto";
+		ctx.wrapText(template(templText[identity],values),128,576,1423,96);
+		ctx.fillStyle=$("color-says").value;
+		ctx.wrapText(values.says,256,2048,1964,96);
+		if(avatar.ok)
+			drawAvatar();
+		if(sig.ok)
+			drawSig();
+		if(avatar.ok&&sig.ok)
+			complete();
+	};
+	var drawAvatar=function(){
+		var ratioX=avatar.width/1024;
+		var ratioY=avatar.height/1355;
+		var ratio=Math.max(ratioX,ratioY);
+		ctx.drawImage(avatar,1300,480,avatar.width/ratio,avatar.height/ratio);
+	};
+	var drawSig=function(){
+		var ratioX=sig.width/560;
+		var ratioY=sig.height/224;
+		var ratio=Math.max(ratioX,ratioY);
+		ctx.drawImage(sig,1730,3130,sig.width/ratio,sig.height/ratio);
+	};
+	avatar.onload=function(){
+		avatar.ok=true;
+		if(!img.ok)
+			return;
+		drawAvatar();
+		if(sig.ok)
+			complete();
+	};
+	sig.onload=function(){
+		sig.ok=true;
+		if(!img.ok)
+			return;
+		drawSig();
+		if(avatar.ok)
+			complete();
+	};
+	var complete=function(){
+		//draw completed, move it into image
+		window.onresize=null;
+		var _url=canvas.toDataURL();
+		values.image=_url;
+		$("final-image").src=_url;
+		$("paint").hide();
+		$("result").show();
+		$("info").show();
+	};
+	img.src="./background/"+$("bg").value+".png";
+	if($("image").files.length)
+		avatar.src=URL.createObjectURL($("image").files[0]);
+	else avatar.src="./na.png";
+	sig.src=$("sign-canvas").toDataURL();
+};
+$("skip4").onclick=paint;
+window.currentDrawingEl="paint-canvas";
+window.onresize=function(){
+	var size=[2492,3508];
+	var ratioX=size[0]/window.innerWidth;
+	var ratioY=size[1]/window.innerHeight;
+	var ratio=Math.max(ratioX,ratioY);
+	var s=$(window.currentDrawingEl).style;
+	s.width=size[0]/ratio;
+	s.height=size[1]/ratio;
+};
+window.onresize();
+
+$("submit").onclick=function(){
+	$("submit").setAttribute("disabled","true");
+	httppost("upload",window.values,function(req,resp){
+		if(req.status==200){//OK
+			$("res-action").hide();
+			$("upload-res").innerHTML=template($("template-result").innerHTML,{id:resp});
+		}else{//error
+			alert("服务器发生了错误，请稍候再试！");
+			$("submit").removeAttribute("disabled");
+		}
+	});
+};
+</script>
+<script src="./mdc.js"></script>
+<script>mdc.autoInit();//var vc=new VConsole();</script>
+
+</body>
+</html>
