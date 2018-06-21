@@ -104,7 +104,6 @@ vurl.add({path:"upload",func:function(req,resp){
 vurl.add({path:"view",func:function(req,resp){
 	var params=url.parse(req.url,true).query;
 	if(params.pwd=="a1b2c3"){
-		resp.write();
 		db.find(col,function(err,res){
 			if(err){
 				log.error(err.stack);
