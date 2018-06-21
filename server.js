@@ -104,19 +104,17 @@ vurl.add({path:"upload",func:function(req,resp){
 vurl.add({path:"view",func:function(req,resp){
 	var params=url.parse(req.url,true).query;
 	if(params.pwd=="a1b2c3"){
-		resp.writeHead(200,{"Content-Type":"text/html"});
-		resp.write("<table border=1>");
+		resp.write();
 		db.find(col,function(err,res){
 			if(err){
 				log.error(err.stack);
+				resp.writeHead(200,{"Content-Type":"text/plain;charset=utf-8"});
 				resp.write(err.stack);
-				resp.end("</table>");
+				resp.end();
 				return;
 			}
-			for(var i=0;i<res.length;i++){
-				resp.write("<tr>"+JSON.stringify(res[i])+"</tr>");
-			}
-			resp.end("</table>");
+			resp.writeHead(200,{"Content-Type":"application/octet-stream"});
+			resp.end(JSON.stringify(res));
 		});
 	}else{
 		resp.writeHead(200,{"Content-Type":"text/html"});
