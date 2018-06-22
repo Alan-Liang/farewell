@@ -138,6 +138,8 @@ vurl.add({path:"upload",func:function(req,resp){
 				return;
 			}else{
 				try{
+					log.warn("reCaptcha failed attempt!");
+					log.warn(vData);
 					resp.writeHead(400);
 					resp.end("reCaptcha auth failed..");
 					return;
