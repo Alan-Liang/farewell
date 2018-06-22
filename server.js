@@ -161,7 +161,16 @@ vurl.add({path:"upload",func:function(req,resp){
 	});
 	vReq.write(payload);
 	vReq.end();
-	var insert=function() {
+	var insert=function(){
+		if(postData.length>8*1024*1024){ //8MB
+			try{
+				resp.writeHead(400);
+				resp.end("Image too large!");
+			}catch(e){
+				log.error(e.stack,);
+			}
+			return;
+		}
 		db.insertOne(col,{values:postData},function(err,res){
 			if(err){
 				log.error(err.stack);
