@@ -167,7 +167,7 @@ vurl.add({path:"upload",func:function(req,resp){
 				resp.writeHead(400);
 				resp.end("Image too large!");
 			}catch(e){
-				log.error(e.stack,);
+				log.error(e.stack);
 			}
 			return;
 		}
