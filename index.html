@@ -289,7 +289,7 @@ Ta是{{child}}的{{relation}}。
 <script src="./signpad.js"></script>
 <script>
 var ua=navigator.userAgent;
-if(ua.indexOf("micromess")>-1){ //微型混乱
+if((/micromess/i).test(ua)){ //微型混乱
 	if(!(/wifi/i).test(ua)){
 		alert("本页面可能消耗1-2MB流量，推荐在Wi-Fi网络中访问。");
 	}
