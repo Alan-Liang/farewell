@@ -7,6 +7,7 @@ var mime=require("mime");
 var url=require("url");
 var vurl=require("./vurl");
 var db=require("./db");
+var https=require("https");
 
 var col;
 db.connect(function(err,res){
@@ -81,12 +82,84 @@ vurl.add({'path':'','func':function(req,resp){
 }});
 
 vurl.add({path:"upload",func:function(req,resp){
+	var params=url.parse(req.url,true).query;
+	if(!params.token){
+		resp.writeHead(400);
+		resp.end("No reCaptcha token provided.");
+		return;
+	}
 	var postData="";
 	req.setEncoding("utf8");
 	req.addListener("data", function(postDataChunk) {
 		postData += postDataChunk;
 	});
-	req.addListener("end", function() {
+	var verified=false;
+	var ended=false;
+	req.addListener("end", function(){
+		ended=true;
+		if(verified)
+			insert();
+	});
+	var payload="secret="+process.env.RC_SECRET+"&response="+params.token;
+	var vReq=https.request({
+		hostname:"www.recaptcha.net",
+		path:"/recaptcha/api/siteverify",
+		method:"POST",
+		headers:{
+			"Content-Length":payload.length,
+			"Content-Type":"application/x-www-form-urlencoded"
+		}
+	},function(res){
+		res.setEncoding("utf8");
+		var vData="";
+		res.on("data",function(chunk){
+			vData+=chunk;
+		});
+		res.on("end",function(){
+			//todo
+			var obj;
+			try{
+				obj=JSON.parse(vData);
+			}catch(e){
+				try{
+					resp.writeHead(503);
+					resp.end("reCaptcha server invalid response");
+					return;
+				}catch(e){
+					log.error(e.stack);
+					return;
+				}
+			}
+			if(obj.success){
+				//todo
+				verified=true;
+				if(ended)
+					insert();
+				return;
+			}else{
+				try{
+					resp.writeHead(400);
+					resp.end("reCaptcha auth failed..");
+					return;
+				}catch(e){
+					log.error(e.stack);
+					return;
+				}
+			}
+		});
+	});
+	vReq.on("error",function(e){
+		log.error(e.stack);
+		try{
+			resp.writeHead(500);
+			resp.end("Internal Error");
+		}catch(e){
+			log.error(e.stack);
+		}
+	});
+	vReq.write(payload);
+	vReq.end();
+	var insert=function() {
 		db.insertOne(col,{values:postData},function(err,res){
 			if(err){
 				log.error(err.stack);
@@ -98,7 +171,7 @@ vurl.add({path:"upload",func:function(req,resp){
 			resp.writeHead(200);
 			resp.end(id);
 		});
-	});
+	};
 }});
 
 vurl.add({path:"view",func:function(req,resp){

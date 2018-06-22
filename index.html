@@ -271,7 +271,8 @@ Ta是{{child}}的{{relation}}。
 <div id="upload-res"></div>
 <img id="final-image" />
 <div id="res-action">
-<button id="submit" class="mdc-button mdc-button--raised" data-mdc-auto-init="MDCRipple">提交图片</button>
+<div class="g-recaptcha" data-callback="rccb" data-sitekey="6LeDMmAUAAAAAL-mHPh4jPQXP6Uc3zidodkpBZVq"></div>
+<button id="submit" disabled="disabled" class="mdc-button mdc-button--raised" data-mdc-auto-init="MDCRipple">提交图片</button>
 </div>
 </div>
 <br />
@@ -554,21 +555,27 @@ window.onresize=function(){
 };
 window.onresize();
 
+var rccb=function(token){
+	window.token=token;
+	$("submit").removeAttribute("disabled");
+};
+window.__recaptcha_api="https://www.recaptcha.net/recaptcha/";
 $("submit").onclick=function(){
 	$("submit").setAttribute("disabled","true");
-	httppost("upload",window.values,function(req,resp){
+	httppost("upload?token="+encodeURIComponent(window.token),window.values,function(req,resp){
 		if(req.status==200){//OK
 			$("res-action").hide();
 			$("upload-res").innerHTML=template($("template-result").innerHTML,{id:resp});
 		}else{//error
-			alert("服务器发生了错误，请稍候再试！");
+			alert("服务器发生了错误，请稍候再试！"+resp);
 			$("submit").removeAttribute("disabled");
 		}
 	});
 };
 </script>
 <script src="./mdc.js"></script>
-<script>mdc.autoInit();//var vc=new VConsole();</script>
-
+<script>mdc.autoInit();//var vc=new VConsole();
+</script>
+<script src="https://www.recaptcha.net/recaptcha/api.js" async defer></script>
 </body>
 </html>
