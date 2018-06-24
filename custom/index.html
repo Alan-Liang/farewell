@@ -142,6 +142,26 @@ html,body{
 <h6 class="mdc-typography--subtitle1">请向我付款。黑白一张0.1元，彩色一张1元。付款时务必备注订单号。</h6>
 </script>
 
+<script language="x/template" id="template-checkbox">
+<div class="mdc-form-field">
+  <div class="mdc-checkbox" data-mdc-auto-init="MDCCheckbox">
+    <input type="checkbox"
+           class="mdc-checkbox__native-control"
+           id="{{id}}"/>
+    <div class="mdc-checkbox__background">
+      <svg class="mdc-checkbox__checkmark"
+           viewBox="0 0 24 24">
+        <path class="mdc-checkbox__checkmark-path"
+              fill="none"
+              d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+      </svg>
+      <div class="mdc-checkbox__mixedmark"></div>
+    </div>
+  </div>
+  <label for="{{id}}">{{text}}</label>
+</div>
+</script>
+
 <script language="x/template" id="template-select">
     <option value="{{value}}">{{text}}</option>
 </script>
@@ -216,7 +236,9 @@ Ta是{{child}}的{{relation}}。
 <div id="styles" class="align-center">
 <h6 class="mdc-typography--subtitle1">选择边框样式</h6>
 <ul class="mdc-image-list" id="bg-list"></ul>
-<div data-init="select bg 边框 sel/请点击图片 1/1 2/2 3/3 4/4 5/5 6/6 7/7"></div>
+<div data-init="select bg 边框 sel/请点击图片 1/1(53.8kB) 2/2(610.9kB) 3/3(914.1kB) 4/4(56.2kB) 5/5(74.9kB) 6/6(202.1kB) 7/7(1.1MB)"></div>
+<h6 class="mdc-typography--subtitle1">选项</h6>
+<div data-init="checkbox jpeg/有损压缩(降低品质，节省流量)"></div>
 <h6 class="mdc-typography--subtitle1">选择背景颜色</h6>
 <input id="color-bg" class="width-90" type="color" value="#ffffff" />
 <h6 class="mdc-typography--subtitle1">选择姓名颜色</h6>
@@ -431,7 +453,10 @@ var paint=function(){
 	var complete=function(){
 		//draw completed, move it into image
 		window.onresize=null;
-		var _url=canvas.toDataURL();
+		var _url;
+		if($("jpeg").checked)
+			_url=canvas.toDataURL("image/jpeg");
+		else _url=canvas.toDataURL();
 		values.image=_url;
 		$("final-image").src=_url;
 		$("paint").hide();
