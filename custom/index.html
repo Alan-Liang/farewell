@@ -15,7 +15,7 @@ Author: Alan-Liang
 <head>
 <title>Farewell</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<link href="./mdc.css" rel="stylesheet" type="text/css" />
+<link href="../mdc.css" rel="stylesheet" type="text/css" />
 <style>
 /* commons */
 .width-100{
@@ -138,7 +138,8 @@ html,body{
 </script>
 <script language="x/template" id="template-result">
 <h6 class="mdc-typography--subtitle1">提交成功！</h6>
-<h6 class="mdc-typography--subtitle1">如果您以后可能再更改任何内容，请记住这个订单号：{{id}}</h6>
+<h6 class="mdc-typography--subtitle1">请记住您的订单号：{{id}}</h6>
+<h6 class="mdc-typography--subtitle1">请向我付款。黑白一张0.1元，彩色一张1元。</h6>
 </script>
 
 <script language="x/template" id="template-select">
@@ -171,7 +172,7 @@ Ta是{{child}}的{{relation}}。
 <!--script type="text/javascript" src="https://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/vconsole/3.0.0/vconsole.min.js"></script-->
 </head>
 <body>
-<script src="./utils.js"></script>
+<script src="../utils.js"></script>
 <div id="info">
 <header class="mdc-top-app-bar mdc-elevation--z5 {{hideAppBar}}" id="appbar" data-mdc-auto-init="MDCTopAppBar">
   <div class="mdc-top-app-bar__row">
@@ -182,61 +183,22 @@ Ta是{{child}}的{{relation}}。
 </header>
 <div id="header-pad" class="{{hideAppBar}}"></div>
 
-<div id="basics">
-<div class="align-center" data-init="radio identity rad-student/同学 rad-teacher/老师 rad-parent/家长">
-<h6 class="mdc-typography--subtitle1">1. 你的身份是？</h6>
-</div>
-
-<div class="align-center">
-<h6 class="mdc-typography--subtitle1">2. 你的名字是？</h6>
-<div data-init="text-field name/姓名"></div>
-<button id="upload-avatar" class="mdc-button mdc-button--raised" data-mdc-auto-init="MDCRipple">上传你的照片</button>
-<img id="preview" />
+<div id="words" class="align-center">
+<div class="align-center" data-init="text-field name/姓名 to/想送给的同学(请勿写学号)">
+<h6 class="mdc-typography--subtitle1">请输入…</h6>
+<h6 class="mdc-typography--subtitle1">重要！如果你想覆盖之前的一张已付款图片，请务必在留言后打16个回车然后输入之前订单号！</h6>
 <br />
-<button id="cont1" class="mdc-button mdc-button--raised" data-mdc-auto-init="MDCRipple">继续</button>
 </div>
+<div class="align-left a b c d mdc-text-field mdc-text-field--textarea width-90" data-mdc-auto-init="MDCTextField">
+  <textarea id="text" class="mdc-text-field__input"></textarea>
+  <label for="text" class="mdc-floating-label">左方文字(“文字”)</label>
 </div>
-
-<div id="student">
-<div class="align-center" data-init="select class 班级 4/4 1/1 2/2 3/3 5/5 6/6 7/7 8/8 9/9 10/10 11/11 12/12 13/13 14/14 other/其他年级或班级">
-<h6 class="mdc-typography--subtitle1">你的班级是？(如果不是初三请选其他)</h6>
-</div>
-
-<div class="align-center" data-init=
-"text-field nick/你的印象中我叫你什么？ mynick/你一般叫我什么？ plot/我做过什么令你印象深刻的事？ nicks/你还有什么别名？ wechat/你的微信 phone/你的电话号？">
-<h6 class="mdc-typography--subtitle1">一些个人问题</h6>
-</div>
-<div style="margin-left:5%;" data-init="select study 你是学魔吗？ yes/是的 abs/肯定是 whynot/怎么可能不是呢？"></div>
-</div><!-- end student -->
-
-<div id="teacher">
-<div class="align-center">
-<h6 class="mdc-typography--subtitle1">关于您</h6>
-<div data-init="text-field subject/您教的科目是？"></div>
-<div data-init="select begin 您从… 初一/初中一年级 初二/初中二年级 初三/初中三年级"></div>
-<div data-init="select end 教到… 初二/初中二年级 初三/初中三年级"></div>
-</div>
-
-<div class="align-center" data-init="text-field timpact/您对我的印象是…">
-<h6 class="mdc-typography--subtitle1">关于我</h6>
-</div>
-</div>
-
-<div id="parent">
-<div class="align-center" data-init="text-field child/您的孩子是？ relation/您是孩子的…">
-<h6 class="mdc-typography--subtitle1">关于您的孩子</h6>
-</div>
-<div class="align-center" data-init="text-field impact/您平时对我的印象是什么？">
-<h6 class="mdc-typography--subtitle1">关于我</h6>
-</div>
-</div>
-
-<div id="final" class="align-center width-100">
-<h6 class="mdc-typography--subtitle1">重要！如果您以前提交过图片，但是想修改，请务必打16个回车然后输入之前的订单号。谢谢！</h6>
 <div class="align-left a b c d mdc-text-field mdc-text-field--textarea width-90" data-mdc-auto-init="MDCTextField">
   <textarea id="says" class="mdc-text-field__input"></textarea>
-  <label for="says" class="mdc-floating-label">您有什么想对我说的吗？</label>
+  <label for="says" class="mdc-floating-label">下方文字(“留言”)</label>
 </div>
+<button id="upload-avatar" class="mdc-button mdc-button--raised" data-mdc-auto-init="MDCRipple">上传你的照片</button>
+<img id="preview" />
 <button id="cont2" class="mdc-button mdc-button--raised" data-mdc-auto-init="MDCRipple">继续</button>
 </div>
 
@@ -287,8 +249,8 @@ Ta是{{child}}的{{relation}}。
 <div id="controls"></div>
 </div>
 
-<script src="./init.js"></script>
-<script src="./signpad.js"></script>
+<script src="../init.js"></script>
+<script src="../signpad.js"></script>
 <script>
 var ua=navigator.userAgent;
 if((/micromess/i).test(ua)){ //微型混乱
@@ -325,7 +287,7 @@ var html="";
 var imglist=$("bg-list");
 var templImglistLi=$("template-imglist-li").innerHTML;
 for(var i=1;i<8;i++){
-	html+=template(templImglistLi,{src:"./background/thumb/"+i+".jpg",id:"bg-li-"+i,i:i});
+	html+=template(templImglistLi,{src:"../background/thumb/"+i+".jpg",id:"bg-li-"+i,i:i});
 }
 imglist.innerHTML=html;
 
@@ -341,54 +303,12 @@ $("image").onchange=function(){
 function isChecked(id){
 	return $(id).parentElement.MDCRadio.checked;
 }
-var identity;
-$("cont1").onclick=function(){
-	if(!$("name").value){
-		$("name").focus();
-		return;
-	}
+$("cont2").onclick=function(){
 	if((!$("image").files||!$("image").files.length)&&(!confirm("你确定不上传照片吗？"))){
 		$("image").click();
 		return;
 	}
-	if(isChecked("rad-student")){
-		$("student").show();
-		identity=1;
-	}else if(isChecked("rad-teacher")){
-		$("teacher").show();
-		identity=2;
-	}else if(isChecked("rad-parent")){
-		$("parent").show();
-		identity=3;
-	}else{
-		return;
-	}
-	$("basics").hide();
-	$("final").show();
-	setTimeout(function(){
-		window.scrollTo(0,0);
-	},10);
-}
-$("cont2").onclick=function(){
-	var fields;
-	switch(identity){
-		case 1: //student
-		fields="name|nick|mynick|plot|nicks|wechat|phone|says".split("|");
-		break;
-		
-		case 2: //teacher
-		fields="name|subject|begin|end|timpact|says".split("|");
-		break;
-		
-		case 3: //parent
-		fields="name|child|relation|impact|says".split("|");
-		break;
-		
-		default: //error
-		alert("发生了一个诡异的错误。请联系我。");
-		return;
-		break;
-	}
+	var fields="name|to|text|says".split("|");
 	var values={};
 	for(var i=0;i<fields.length;i++){
 		var el=$(fields[i]);
@@ -398,29 +318,10 @@ $("cont2").onclick=function(){
 		}
 		values[fields[i]]=el.value;
 	}
-	if(identity==1){ //student
-		var itsClass=$("class").value; //class is reserved
-		if(itsClass=="other"){
-			var res;
-			while(!res){
-				res=prompt("请填写你的班级：","");
-			}
-			itsClass=res;
-		}
-		values.itsClass=itsClass;
-		values.study={
-			yes:"是",
-			abs:"肯定是",
-			whynot:"怎么可能不是"
-		}[$("study").value];
-	}
 	if($("image").files.length)
 		values.avatar=getDataURL($("preview"));
 	window.values=values;
-	$("teacher").hide();
-	$("student").hide();
-	$("parent").hide();
-	$("final").hide();
+	$("words").hide();
 	$("styles").show();
 }
 $("cont4").onclick=function(){
@@ -489,7 +390,7 @@ var paint=function(){
 		ctx.fillStyle=$("color-text").value;
 		ctx.textAlign="start";
 		ctx.font="64px Roboto";
-		ctx.wrapText(template(templText[identity],values),128,576,1423,96);
+		ctx.wrapText(values.text,128,576,1423,96);
 		ctx.fillStyle=$("color-says").value;
 		ctx.wrapText(values.says,256,2048,1964,96);
 		if(avatar.ok)
@@ -537,10 +438,10 @@ var paint=function(){
 		$("result").show();
 		$("info").show();
 	};
-	img.src="./background/"+$("bg").value+".png";
+	img.src="../background/"+$("bg").value+".png";
 	if($("image").files.length)
 		avatar.src=URL.createObjectURL($("image").files[0]);
-	else avatar.src="./na.png";
+	else avatar.src="../na.png";
 	sig.src=$("sign-canvas").toDataURL();
 };
 $("skip4").onclick=paint;
@@ -563,7 +464,7 @@ var rccb=function(token){
 window.__recaptcha_api="https://www.recaptcha.net/recaptcha/";
 $("submit").onclick=function(){
 	$("submit").setAttribute("disabled","true");
-	httppost("upload?token="+encodeURIComponent(window.token),window.values,function(req,resp){
+	httppost("/upload?custom=1&token="+encodeURIComponent(window.token),window.values,function(req,resp){
 		if(req.status==200){//OK
 			$("res-action").hide();
 			$("upload-res").innerHTML=template($("template-result").innerHTML,{id:resp});
@@ -574,7 +475,7 @@ $("submit").onclick=function(){
 	});
 };
 </script>
-<script src="./mdc.js"></script>
+<script src="../mdc.js"></script>
 <script>mdc.autoInit();//var vc=new VConsole();
 </script>
 <script src="https://www.recaptcha.net/recaptcha/api.js" async defer></script>

@@ -9,12 +9,13 @@ var vurl=require("./vurl");
 var db=require("./db");
 var https=require("https");
 
-var col;
+var col,col2;
 db.connect(function(err,res){
 	if(err)
 		console.error(err);
 	console.log("Database connection");
 	col=db.getCollection("messages");
+	col2=db.getCollection("custom");
 });
 
 var port=8080;
@@ -34,7 +35,10 @@ var listeningFunc=function(req,resp){
       return;
     }
   }else if(cache[pathname]){
-    var type=mime.lookup(pathname.substr(1));
+  	var type;
+  	if(pathname.endsWith("/"))
+  		type="text/html"
+    else type=mime.lookup(pathname.substr(1));
     if(type=="text/html")
     	type="text/html;charset=utf-8";
     resp.writeHead(200, {'Content-Type':type});
@@ -66,7 +70,7 @@ startsvc=function(port,ipaddress){
   }
 };
 
-var loadpages=["index.html","mdc.css","mdc.js","init.js","signpad.js","utils.js","na.png"];
+var loadpages=["index.html","custom/index.html","mdc.css","mdc.js","init.js","signpad.js","utils.js","na.png"];
 for(var i=0;i<loadpages.length;i++){
   try{
     var page=fs.readFileSync(loadpages[i]);
@@ -75,6 +79,7 @@ for(var i=0;i<loadpages.length;i++){
     log.error(timeH(),"Error reading file "+loadpages[i]+" : "+e.stack);
   }
 }
+cache["custom"]=cache["custom/"]=cache["custom/index.html"];
 
 vurl.add({'path':'','func':function(req,resp){
   resp.writeHead(302,{Location:"/index.html"});
@@ -162,6 +167,7 @@ vurl.add({path:"upload",func:function(req,resp){
 	vReq.write(payload);
 	vReq.end();
 	var insert=function(){
+		var collection=params.custom?col2:col;
 		if(postData.length>8*1024*1024){ //8MB
 			try{
 				resp.writeHead(400);
@@ -171,7 +177,7 @@ vurl.add({path:"upload",func:function(req,resp){
 			}
 			return;
 		}
-		db.insertOne(col,{values:postData},function(err,res){
+		db.insertOne(collection,{values:postData},function(err,res){
 			if(err){
 				log.error(err.stack);
 				resp.writeHead(501);
@@ -187,8 +193,9 @@ vurl.add({path:"upload",func:function(req,resp){
 
 vurl.add({path:"view",func:function(req,resp){
 	var params=url.parse(req.url,true).query;
+	var collection=params.custom?col2:col;
 	if(params.pwd=="a1b2c3"){
-		db.find(col,function(err,res){
+		db.find(collection,function(err,res){
 			if(err){
 				log.error(err.stack);
 				resp.writeHead(200,{"Content-Type":"text/plain;charset=utf-8"});
