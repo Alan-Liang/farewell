@@ -138,7 +138,10 @@ html,body{
 </script>
 <script language="x/template" id="template-result">
 <h6 class="mdc-typography--subtitle1">提交成功！</h6>
-<h6 class="mdc-typography--subtitle1">如果您以后可能再更改任何内容，请记住这个订单号：{{id}}</h6>
+<h6 class="mdc-typography--subtitle1">
+如果您以后可能再更改任何内容，请记住这个订单号：{{id}}
+<button class="mdc-button" onclick="copy(&quot;{{id}}&quot;)" data-mdc-auto-init="MDCRipple">复制</button>
+</h6>
 </script>
 <script language="x/template" id="template-checkbox">
 <div class="mdc-form-field">

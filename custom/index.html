@@ -138,7 +138,10 @@ html,body{
 </script>
 <script language="x/template" id="template-result">
 <h6 class="mdc-typography--subtitle1">提交成功！</h6>
-<h6 class="mdc-typography--subtitle1">请记住您的订单号：{{id}}</h6>
+<h6 class="mdc-typography--subtitle1">
+请记住您的订单号：{{id}}
+<button class="mdc-button" onclick="copy(&quot;{{id}}&quot;)" data-mdc-auto-init="MDCRipple">复制</button>
+</h6>
 <h6 class="mdc-typography--subtitle1">请向我付款。黑白一张0.1元，彩色一张1元。付款时务必备注订单号。</h6>
 </script>
 
@@ -493,6 +496,7 @@ $("submit").onclick=function(){
 		if(req.status==200){//OK
 			$("res-action").hide();
 			$("upload-res").innerHTML=template($("template-result").innerHTML,{id:resp});
+			mdc.autoInit();
 		}else{//error
 			alert("服务器发生了错误，请稍候再试！"+resp);
 			$("submit").removeAttribute("disabled");

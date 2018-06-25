@@ -133,3 +133,22 @@ function getDataURL(img) {
 
     return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
 }
+
+//copying
+function copy(text){
+	var el=document.createElement("textarea");
+	el.value=text;
+	document.body.appendChild(el);
+	el.focus();
+	el.select();	
+	try{
+		var res=document.execCommand("copy");
+		if(!res){
+			throw new Error("unable to copy");
+		}
+	}catch(e){
+		prompt("很抱歉，我们无法自动复制。请手动复制下面内容：",text);
+		console.log(e.stack);
+	}
+	document.body.removeChild(el);
+}
